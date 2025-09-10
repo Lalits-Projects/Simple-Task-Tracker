@@ -5,13 +5,11 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import font
 
-dict = {}
+dict_val = {}
 window = tk.Tk()
 window.title("To-Do List Creator")
 window.resizable(width=False, height=False)
 
-strikethrough_font = font.Font(family="Arial", size=10, overstrike=1)
-regular_font = font.Font(family="Arial", size=10)
 
 
 
@@ -19,14 +17,27 @@ regular_font = font.Font(family="Arial", size=10)
 def storeDict():
     task_val = task_entry.get()
     time_val = time_entry.get()
-    dict[time_val] = task_val
+    dict_val[time_val] = task_val
     task_entry.delete(0, tk.END)
     time_entry.delete(0, tk.END)
 
 def killWindow():
     window.destroy()
 
+def strikeOut(event):
+    completed = treeview.selection()
+    for vals in completed:
+        current_tags = treeview.item(vals, "tags")
+        if "completed" in current_tags:
+            treeview.item(vals, tags="chillen")
+        else:
+            treeview.item(vals, tags="completed")
+    treeview.selection_clear()
 
+def unselect(event):
+    treeview.selection_set(())
+
+    
 
 task_frame = tk.Frame(master=window)
 task_entry = tk.Entry(master=task_frame, width=50)
@@ -69,9 +80,12 @@ treeview = ttk.Treeview(columns= ("time"))
 treeview.heading("#0", text="Tasks")
 treeview.heading("time", text="Times")
 
-for keys in dict:
+strikethrough_font = font.Font(size=8, overstrike=1)
+
+
+for keys in dict_val:
     time_key = keys
-    task_val = dict[keys]
+    task_val = dict_val[keys]
     treeview.insert(
         "",
         tk.END,
@@ -79,8 +93,13 @@ for keys in dict:
         values = (time_key)
     )
 
+treeview.bind("<Double-1>", strikeOut)
+treeview.bind("<Button-1>", unselect) 
+treeview.tag_configure("completed", font=strikethrough_font)
 treeview.pack()
 root.mainloop()
+
+
 
 
 
