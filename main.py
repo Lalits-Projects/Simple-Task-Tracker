@@ -32,7 +32,7 @@ def strikeOut(event):
             treeview.item(vals, tags="chillen")
         else:
             treeview.item(vals, tags="completed")
-    treeview.selection_clear()
+    treeview.selection_set(())
 
 def unselect(event):
     treeview.selection_set(())
@@ -98,6 +98,7 @@ treeview.bind("<Button-1>", unselect)
 treeview.tag_configure("completed", font=strikethrough_font)
 treeview.pack()
 root.mainloop()
+
 
 
 
