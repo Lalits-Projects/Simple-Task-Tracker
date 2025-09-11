@@ -33,9 +33,22 @@ def strikeOut(event):
         else:
             treeview.item(vals, tags="completed")
     treeview.selection_set(())
+    
 
 def unselect(event):
+    region = treeview.identify_region(event.x, event.y)
+    if(region == "separator"):
+        return "break"
     treeview.selection_set(())
+    
+
+def stopColResize(event):
+    region = treeview.identify_region(event.x, event.y)
+    if(region == "separator"):
+        return "break"
+    
+    
+
 
     
 
@@ -47,11 +60,11 @@ time_frame = tk.Frame(master=window)
 time_entry = tk.Entry(master=time_frame, width=50)
 time_lable = tk.Label(master=time_frame, text="Time")
 
-task_entry.grid(row=0, column=1)
-task_lable.grid(row=0, column=0)
+task_entry.grid(row=1, column=1)
+task_lable.grid(row=1, column=0)
 
-time_entry.grid(row=1, column=1)
-time_lable.grid(row=1, column=0)
+time_entry.grid(row=0, column=1)
+time_lable.grid(row=0, column=0)
 
 btn_addTask = tk.Button(
     master=window,
@@ -65,8 +78,8 @@ btn_createTable = tk.Button(
     command = killWindow
 )
 
-task_frame.grid(row=0, column=0, pady=5)
-time_frame.grid(row=1, column=0, pady=5)
+task_frame.grid(row=1, column=0, pady=5)
+time_frame.grid(row=0, column=0, pady=5)
 btn_addTask.grid(row=2, column=0, pady=2)
 btn_createTable.grid(row=3, column=0, pady=2)
 
@@ -76,11 +89,26 @@ window.mainloop()
 
 root = tk.Tk()
 root.title("Things To Do:")
+root.resizable(width=False, height=False)
+
+# Adjust These Values To Adjust Created To-Do Lis
+task_width = 400
+time_width = 100
+
+total_width = task_width + time_width
+hieght_val = len(dict_val) * 20 + 30
+
+
+root.geometry(str(total_width)+"x"+str(hieght_val))
 treeview = ttk.Treeview(columns= ("time"))
 treeview.heading("#0", text="Tasks")
 treeview.heading("time", text="Times")
+treeview.column("#0", width=task_width, minwidth=task_width, stretch=False)
+treeview.column("time", width=time_width, minwidth=time_width, stretch=False)
 
-strikethrough_font = font.Font(size=8, overstrike=1)
+
+
+strikethrough_font = font.Font(size=9, overstrike=1)
 
 
 for keys in dict_val:
@@ -94,11 +122,11 @@ for keys in dict_val:
     )
 
 treeview.bind("<Double-1>", strikeOut)
-treeview.bind("<Button-1>", unselect) 
+treeview.bind("<Button-1>", unselect)
+treeview.bind("<B1-Motion>", stopColResize) 
 treeview.tag_configure("completed", font=strikethrough_font)
 treeview.pack()
 root.mainloop()
-
 
 
 
